@@ -3,23 +3,38 @@ echo '<h1 style="text-align: center; margin-top: 40px;">Welcome to To DO App</h1
 
 const TASKS_FILE = 'tasks.json';
 
-if(file_exists(TASKS_FILE)) {
-    $alltasks = file_get_contents(TASKS_FILE);
-    echo $alltasks;
-    $tasks = json_decode($alltasks, true);
-} else {
-    echo 'No tasks yet. Add one above!';
-    $tasks = [];
-}
 
 function loadAllTasks(): array
 {
-    if (!file_exists(TASKS_FILE)) {
+    if (file_exists(TASKS_FILE)) {
+        $alltasks = file_get_contents(TASKS_FILE);
+        $tasks = json_decode($alltasks, true);
+        if (count($tasks) > 0) {
+            return $tasks;
+        } else {
+            return [];
+        }
+    } else {
         return [];
     }
-    $alltasks = file_get_contents(TASKS_FILE);
-    return json_decode($alltasks, true);
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['task'])) {
+        if (!empty($_POST['task'])) {
+            $task = trim($_POST['task']);
+            $tasks[] = [
+                'name' => $task,
+                'done' => false,
+            ];
+            file_put_contents(TASKS_FILE, json_encode($tasks, JSON_PRETTY_PRINT));
+            exit;
+        }
+    }
+}
+
+$tasks = loadAllTasks();
+
 ?>
 
 <!DOCTYPE html>
