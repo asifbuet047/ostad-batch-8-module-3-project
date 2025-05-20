@@ -32,6 +32,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location:' . $_SERVER['PHP_SELF']);
             exit;
         }
+    } elseif (isset($_POST['delete'])) {
+        $index = $_POST['delete'];
+        unset($tasks[$index]);
+        file_put_contents(TASKS_FILE, json_encode(array_values($tasks), JSON_PRETTY_PRINT));
+        header('Location:' . $_SERVER['PHP_SELF']);
+        exit;
+    } elseif (isset($_POST['toggle'])) {
+        $index = $_POST['toggle'];
+        $tasks[$index]['done'] = !$tasks[$index]['done'];
+        file_put_contents(TASKS_FILE, json_encode($tasks, JSON_PRETTY_PRINT));
+        header('Location:' . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
@@ -109,14 +121,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <?php if (empty($tasks)): ?>
                     <li>No tasks yet. Add one above!</li>
-                    <!-- if there are tasks, display each task with a toggle and delete option -->
-
-
                 <?php else: ?>
                     <?php foreach ($tasks as $index => $task): ?>
                         <li class="task-item">
                             <form method="POST" style="flex-grow: 1;">
-                                <input type="hidden" name="toggle" value="">
+                                <input type="hidden" name="toggle" value="<?= $index ?>">
 
                                 <button type="submit" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
                                     <span class="task <?= $task['done'] ? 'task-done' : '' ?>">
@@ -126,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </form>
 
                             <form method="POST">
-                                <input type="hidden" name="delete" value="">
+                                <input type="hidden" name="delete" value="<?= $index ?>">
                                 <button type="submit" class="button button-outline" style="margin-left: 10px;">Delete</button>
                             </form>
                         </li>
