@@ -19,21 +19,22 @@ function loadAllTasks(): array
     }
 }
 
+$tasks = loadAllTasks();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['task'])) {
         if (!empty($_POST['task'])) {
             $task = trim($_POST['task']);
             $tasks[] = [
-                'name' => $task,
+                'name' => htmlspecialchars($task),
                 'done' => false,
             ];
             file_put_contents(TASKS_FILE, json_encode($tasks, JSON_PRETTY_PRINT));
+            header('Location:' . $_SERVER['PHP_SELF']);
             exit;
         }
     }
 }
-
-$tasks = loadAllTasks();
 
 ?>
 
