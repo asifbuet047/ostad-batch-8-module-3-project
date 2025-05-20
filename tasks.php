@@ -1,8 +1,25 @@
-<!-- UI -->
-
 <?php
+echo '<h1 style="text-align: center; margin-top: 40px;">Welcome to To DO App</h1>';
 
-echo "<h1>Welcome</h1>";
+const TASKS_FILE = 'tasks.json';
+
+if(file_exists(TASKS_FILE)) {
+    $alltasks = file_get_contents(TASKS_FILE);
+    echo $alltasks;
+    $tasks = json_decode($alltasks, true);
+} else {
+    echo 'No tasks yet. Add one above!';
+    $tasks = [];
+}
+
+function loadAllTasks(): array
+{
+    if (!file_exists(TASKS_FILE)) {
+        return [];
+    }
+    $alltasks = file_get_contents(TASKS_FILE);
+    return json_decode($alltasks, true);
+}
 ?>
 
 <!DOCTYPE html>
