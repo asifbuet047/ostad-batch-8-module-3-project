@@ -3,7 +3,6 @@ echo '<h1 style="text-align: center; margin-top: 40px;">Welcome to To DO App</h1
 
 const TASKS_FILE = 'tasks.json';
 
-
 function loadAllTasks(): array
 {
     if (file_exists(TASKS_FILE)) {
@@ -108,27 +107,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- TODO: Loop through tasks array and display each task with a toggle and delete option -->
                 <!-- If there are no tasks, display a message saying "No tasks yet. Add one above!" -->
 
-                <li>No tasks yet. Add one above!</li>
-                <!-- if there are tasks, display each task with a toggle and delete option -->
+                <?php if (empty($tasks)): ?>
+                    <li>No tasks yet. Add one above!</li>
+                    <!-- if there are tasks, display each task with a toggle and delete option -->
 
 
-                <li class="task-item">
-                    <form method="POST" style="flex-grow: 1;">
-                        <input type="hidden" name="toggle" value="">
+                <?php else: ?>
+                    <?php foreach ($tasks as $index => $task): ?>
+                        <li class="task-item">
+                            <form method="POST" style="flex-grow: 1;">
+                                <input type="hidden" name="toggle" value="">
 
-                        <button type="submit" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
-                            <span class="task">
-                                Task 1
-                            </span>
-                        </button>
-                    </form>
+                                <button type="submit" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
+                                    <span class="task <?= $task['done'] ? 'task-done' : '' ?>">
+                                        <?= $task['name'] ?>
+                                    </span>
+                                </button>
+                            </form>
 
-                    <form method="POST">
-                        <input type="hidden" name="delete" value="">
-                        <button type="submit" class="button button-outline" style="margin-left: 10px;">Delete</button>
-                    </form>
-                </li>
-
+                            <form method="POST">
+                                <input type="hidden" name="delete" value="">
+                                <button type="submit" class="button button-outline" style="margin-left: 10px;">Delete</button>
+                            </form>
+                        </li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </ul>
 
         </div>
